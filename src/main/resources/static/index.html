@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Travel Planner</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<!-- Page 1: Country Selection -->
+<div id="page1" class="container">
+  <h1>Enter a Country</h1>
+  <input type="text" id="countryInput" class="input" placeholder="e.g., Canada">
+  <button class="button" onclick="goToCitySelection()">Next</button>
+</div>
+
+<!-- Page 2: City Selection -->
+<div id="page2" class="container hidden">
+  <h1>Select Cities to Visit</h1>
+  <p>Select up to 5 cities you would like to explore in <span id="countryName"></span>.</p>
+  <div id="cityList" class="checkbox-container"></div>
+  <button class="button" onclick="goToActivityTypeSelection()">Next</button>
+</div>
+
+
+<!-- Page 3: Activity Type Selection -->
+<div id="page3" class="container hidden">
+  <h1>Select Activity Types</h1>
+  <div id="activityTypeList"></div>
+  <button class="button" onclick="goToActivitySelection()">Next</button>
+</div>
+
+<!-- Page 4: Activity Selection -->
+<div id="page4" class="container hidden">
+  <h1>Select Activities</h1>
+  <div id="activityList"></div>
+  <button class="button" onclick="goToSummary()">Next</button>
+</div>
+
+<!-- Page 5: Summary -->
+<div id="page5" class="container hidden">
+  <h1>Summary</h1>
+  <div id="summary" class="summary"></div>
+  <button class="button" onclick="startOver()">Start Over</button>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
