@@ -3,7 +3,7 @@ body {
     font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 0;
-    background: #e0e5ec;
+    background: #EAEEF2;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -12,7 +12,11 @@ body {
 }
 
 h1, h3 {
-    color: #333;
+    color: #444;
+    font-weight: 700;
+    margin: 25px 0;
+    letter-spacing: 0.2rem;
+    font-size: 28px;
     text-align: center;
 }
 
@@ -22,112 +26,94 @@ h1, h3 {
     text-align: center;
 }
 
+.input-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+    margin: 15px;
+}
+
 .hidden {
     display: none;
 }
 
-.button {
-    background: #e0e5ec;
-    border: none;
-    border-radius: 12px;
-    box-shadow: 5px 5px 15px #a3b1c6, -5px -5px 15px #ffffff;
-    padding: 12px 24px;
-    font-size: 16px;
-    color: #333;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin-top: 20px;
-}
-
-.button:hover {
-    box-shadow: 2px 2px 6px #a3b1c6, -2px -2px 6px #ffffff;
-    transform: translateY(-2px);
-}
-
+/* Input Styles */
 .input {
-    width: 100%;
+    width: 70%;
     padding: 15px;
-    margin: 20px 0;
+    margin-bottom: 15px;
     border: none;
-    border-radius: 12px;
-    box-shadow: inset 5px 5px 15px #a3b1c6, inset -5px -5px 15px #ffffff;
-    font-size: 16px;
+    border-radius: 0.5rem;
+    background: #F5F7F9;
+    box-shadow: inset -6px -6px 14px rgba(255, 255, 255, 0.7),
+    inset -6px -6px 10px rgba(255, 255, 255, 0.5),
+    inset 6px 6px 8px rgba(255, 255, 255, 0.075),
+    inset 6px 6px 10px rgba(0, 0, 0, 0.15);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.2rem;
+    text-align: center;
     outline: none;
 }
 
-/* Styling for city list container */
-.checkbox-container {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    align-items: center;
-    margin: 20px 0;
-}
-
-/* Individual city card */
-.checkbox {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 90%;
-    max-width: 500px;
-    background: #e0e5ec;
-    border-radius: 15px;
-    box-shadow: 5px 5px 15px #a3b1c6, -5px -5px 15px #ffffff;
-    padding: 15px 20px;
-    transition: all 0.3s ease;
-}
-
-.checkbox:hover {
-    box-shadow: 2px 2px 6px #a3b1c6, -2px -2px 6px #ffffff;
-    transform: translateY(-2px);
-}
-
-/* Checkbox input */
-.checkbox input {
-    width: 20px;
-    height: 20px;
-    accent-color: #4caf50;
+/* Button Styles */
+button {
+    padding: 1.5em 5em;
+    background: #F5F7F9;
+    border: none;
+    border-radius: 0.5rem;
+    color: #444;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.2rem;
+    text-align: center;
+    text-indent: 20px;
+    outline: none;
     cursor: pointer;
+    transition: 0.2s ease-in-out;
+    box-shadow: -6px -6px 14px rgba(255, 255, 255, 0.7),
+    -6px -6px 10px rgba(255, 255, 255, 0.5),
+    6px 6px 8px rgba(255, 255, 255, 0.075),
+    6px 6px 10px rgba(0, 0, 0, 0.15);
+    margin: 10px;
 }
 
-/* City label */
-.checkbox label {
-    flex: 1;
-    font-size: 16px;
-    color: #333;
-    margin-left: 10px;
-    text-align: left;
+button:hover {
+    box-shadow: -2px -2px 6px rgba(255, 255, 255, 0.6),
+    -2px -2px 4px rgba(255, 255, 255, 0.4),
+    2px 2px 2px rgba(255, 255, 255, 0.05),
+    2px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.activity-button {
-    display: inline-block;
-    margin: 5px;
-    padding: 10px 15px;
-    background: #e0e5ec;
-    border-radius: 12px;
-    box-shadow: 5px 5px 15px #a3b1c6, -5px -5px 15px #ffffff;
-    color: #333;
-    cursor: pointer;
-    transition: all 0.3s ease;
+button:active {
+    box-shadow: inset -2px -2px 6px rgba(255, 255, 255, 0.7),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.5),
+    inset 2px 2px 2px rgba(255, 255, 255, 0.075),
+    inset 2px 2px 4px rgba(0, 0, 0, 0.15);
 }
 
-.activity-button:hover {
-    box-shadow: 2px 2px 6px #a3b1c6, -2px -2px 6px #ffffff;
-    transform: translateY(-2px);
+button.selected {
+    background: #F5F7F9;
+    box-shadow: inset -6px -6px 14px rgba(255, 255, 255, 0.7),
+    inset -6px -6px 10px rgba(255, 255, 255, 0.5),
+    inset 6px 6px 8px rgba(255, 255, 255, 0.075),
+    inset 6px 6px 10px rgba(0, 0, 0, 0.15);
 }
 
+/* Summary container */
 .summary {
-    background: #f0f4f8;
+    background: #F5F7F9;
     border-radius: 15px;
     padding: 20px;
     box-shadow: inset 5px 5px 15px #a3b1c6, inset -5px -5px 15px #ffffff;
 }
 
-/* Responsive adjustments */
+/* Responsive Adjustments */
 @media (max-width: 768px) {
-    .checkbox {
+    .activity-button, .city-button {
         width: 100%;
+        text-align: center;
     }
 }
-

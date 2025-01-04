@@ -10,6 +10,18 @@ const activityTypeOptions = [
     "Snorkeling", "Museum Visit", "Nature Walk", "Photography", "Adventure Sports"
 ];
 
+function toggleButtonSelection(button, item, list) {
+    const index = list.indexOf(item);
+
+    if (index === -1) {
+        list.push(item);
+        button.classList.add("selected");
+    } else {
+        list.splice(index, 1);
+        button.classList.remove("selected");
+    }
+}
+
 async function goToCitySelection() {
     selectedCountry = document.getElementById("countryInput").value.trim();
     console.log("Selected Country:", selectedCountry);
@@ -40,30 +52,27 @@ async function goToCitySelection() {
             return;
         }
 
-        // Update country name dynamically
         document.getElementById("countryName").textContent = selectedCountry;
 
         const cityList = document.getElementById("cityList");
         cityList.innerHTML = "";
         cities.forEach(city => {
-            const container = document.createElement("div");
-            container.classList.add("checkbox");
+            const button = document.createElement("button");
+            button.classList.add("city-button");
 
-            const checkbox = document.createElement("input");
-            checkbox.type = "checkbox";
-            checkbox.id = city.name;
-            checkbox.value = JSON.stringify(city);
+            // Use structured innerHTML for better formatting
+            button.innerHTML = `
+                <strong>${city.name}</strong><br>
+                <span class="city-description">${city.description}</span>
+            `;
 
-            const label = document.createElement("label");
-            label.htmlFor = city.name;
-            label.textContent = `${city.name} (${city.population}) - ${city.description}`;
+            button.onclick = () => {
+                toggleButtonSelection(button, city, selectedCities);
+                console.log("Selected Cities:", selectedCities);
+            };
 
-            container.appendChild(checkbox);
-            container.appendChild(label);
-            cityList.appendChild(container);
+            cityList.appendChild(button);
         });
-
-        console.log("City List HTML:", cityList.innerHTML);
 
         document.getElementById("page1").classList.add("hidden");
         document.getElementById("page2").classList.remove("hidden");
@@ -74,9 +83,6 @@ async function goToCitySelection() {
 }
 
 function goToActivityTypeSelection() {
-    selectedCities = Array.from(document.querySelectorAll("#cityList input:checked")).map(input => JSON.parse(input.value));
-    console.log("Selected Cities:", selectedCities); // Debug: Log selected cities
-
     if (selectedCities.length === 0) {
         alert("Please select at least one city.");
         return;
@@ -86,17 +92,12 @@ function goToActivityTypeSelection() {
     activityTypeList.innerHTML = "";
 
     activityTypeOptions.forEach(type => {
-        const button = document.createElement("div");
-        button.classList.add("activity-button");
+        const button = document.createElement("button");
         button.textContent = type;
+        button.classList.add("activity-button");
         button.onclick = () => {
-            if (!selectedActivityTypes.includes(type)) {
-                selectedActivityTypes.push(type);
-                button.style.backgroundColor = "#c2e7da"; // Highlight selected
-            } else {
-                selectedActivityTypes = selectedActivityTypes.filter(t => t !== type);
-                button.style.backgroundColor = ""; // Unselect
-            }
+            toggleButtonSelection(button, type, selectedActivityTypes);
+            console.log("Selected Activity Types:", selectedActivityTypes);
         };
         activityTypeList.appendChild(button);
     });
@@ -111,19 +112,15 @@ async function goToActivitySelection() {
         return;
     }
 
-    console.log("Selected Activity Types:", selectedActivityTypes); // Debug
+    console.log("Selected Activity Types:", selectedActivityTypes);
 
     const activityList = document.getElementById("activityList");
     activityList.innerHTML = "";
 
     for (const city of selectedCities) {
-        console.log("Fetching activities for city:", city.name); // Debug
+        console.log("Fetching activities for city:", city.name);
 
-        const payload = {
-            city,
-            activityTypes: selectedActivityTypes
-        };
-        console.log("Payload:", payload); // Debug
+        const payload = { city, activityTypes: selectedActivityTypes };
 
         try {
             const response = await fetch(`/api/v1/generate/activities`, {
@@ -132,7 +129,7 @@ async function goToActivitySelection() {
                 body: JSON.stringify(payload)
             });
 
-            console.log("Response Status:", response.status); // Debug
+            console.log("Response Status:", response.status);
 
             if (!response.ok) {
                 console.error("Error fetching activities:", response.statusText);
@@ -140,7 +137,7 @@ async function goToActivitySelection() {
             }
 
             const activities = await response.json();
-            console.log("Activities Response:", activities); // Debug
+            console.log("Activities Response:", activities);
 
             if (!Array.isArray(activities) || activities.length === 0) continue;
 
@@ -151,23 +148,17 @@ async function goToActivitySelection() {
             selectedActivities[city.name] = [];
 
             activities.forEach(activity => {
-                const button = document.createElement("div");
+                const button = document.createElement("button");
+                button.textContent = `${activity.title} (${activity.type})`;
                 button.classList.add("activity-button");
-                button.innerHTML = `
-                    <strong>${activity.title}</strong><br>
-                    <small>Type: ${activity.type}</small><br>
-                    <small>Best Time: ${activity.bestTime}</small><br>
-                    <small>Cost: ${activity.cost}</small>
-                `;
                 button.onclick = () => {
-                    if (!selectedActivities[city.name].some(a => a.title === activity.title)) {
-                        selectedActivities[city.name].push(activity);
-                    }
+                    toggleButtonSelection(button, activity, selectedActivities[city.name]);
+                    console.log("Selected Activities for", city.name, selectedActivities[city.name]);
                 };
                 activityList.appendChild(button);
             });
         } catch (error) {
-            console.error(`Error fetching activities for city ${city.name}:`, error); // Debug
+            console.error(`Error fetching activities for city ${city.name}:`, error);
         }
     }
 
@@ -186,7 +177,6 @@ function goToSummary() {
 
         selectedActivities[city].forEach(activity => {
             const activityItem = document.createElement("div");
-            activityItem.classList.add("summary-activity");
             activityItem.innerHTML = `
                 <strong>${activity.title}</strong><br>
                 <small>Type: ${activity.type}</small><br>

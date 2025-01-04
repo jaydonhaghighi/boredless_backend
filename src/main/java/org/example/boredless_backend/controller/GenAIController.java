@@ -7,7 +7,6 @@ import org.example.boredless_backend.model.ActivityType;
 import org.example.boredless_backend.model.City;
 import org.example.boredless_backend.service.ChatService;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,8 +46,4 @@ public class GenAIController {
 
         return chatService.getActivities(city, activityTypes);
     }
-
-
-
 }
-

@@ -34,8 +34,7 @@ public class ChatService {
         {
             "name": "City name",
             "country": "Country name",
-            "description": "Brief description of the city",
-            "population": "City population"
+            "description": "Brief description of the city"
         }
         """;
 

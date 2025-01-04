@@ -15,15 +15,13 @@ public class City {
     private String name;
     private String country;
     private String description;
-    private String population;
 
     public City() {} // default constructor
 
-    public City(String name, String country, String description, String population) {
+    public City(String name, String country, String description) {
         this.name = name;
         this.country = country;
         this.description = description;
-        this.population = population;
     }
 
     public Long getId() {
@@ -56,13 +54,5 @@ public class City {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getPopulation() {
-        return population;
-    }
-
-    public void setPopulation(String population) {
-        this.population = population;
     }
 }
