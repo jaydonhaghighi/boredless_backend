@@ -30,19 +30,19 @@ public class ChatService {
     public List<City> getTopCities(String country) {
         // Define the structured format for cities
         String format = """
-        Your response should be a JSON array of objects, with each object adhering to this structure:
-        {
-            "name": "City name",
-            "country": "Country name",
-            "description": "Brief description of the city"
-        }
-        """;
+                        Your response should be a JSON array of objects, with each object adhering to this structure:
+                        {
+                            "name": "City name",
+                            "country": "Country name",
+                            "description": "Brief description of the city"
+                        }
+                        """;
 
         // Create a dynamic prompt
         String template = """
-        List the top 5 cities to visit in {country}.
-        {format}
-        """;
+                          List the top 5 cities to visit in {country}.
+                          {format}
+                          """;
 
         PromptTemplate promptTemplate = new PromptTemplate(template, Map.of("country", country, "format", format));
         Prompt prompt = new Prompt(promptTemplate.createMessage());
@@ -84,11 +84,12 @@ public class ChatService {
             "bestTime": "Best time to do the activity",
             "cost": "Cost or 'Free'"
         }
+        Each activity type should include 5 unique activities.
         """;
 
         // Create a dynamic prompt
         String template = """
-        List the top activities to do in {cityName}, focusing on the following types: {activityTypes}.
+        For the city of {cityName}, generate 5 unique activities for each of the following types: {activityTypes}.
         {format}
         """;
 
@@ -110,7 +111,6 @@ public class ChatService {
         }
 
         // Convert the AI's response into a list of Activity objects
-        ObjectMapper objectMapper = new ObjectMapper();
         try {
             return objectMapper.readValue(rawResponse, new TypeReference<List<Activity>>() {});
         } catch (Exception e) {

@@ -145,17 +145,27 @@ async function goToActivitySelection() {
             cityHeader.textContent = city.name;
             activityList.appendChild(cityHeader);
 
-            selectedActivities[city.name] = [];
+            selectedActivities[city.name] = {};
 
-            activities.forEach(activity => {
-                const button = document.createElement("button");
-                button.textContent = `${activity.title} (${activity.type})`;
-                button.classList.add("activity-button");
-                button.onclick = () => {
-                    toggleButtonSelection(button, activity, selectedActivities[city.name]);
-                    console.log("Selected Activities for", city.name, selectedActivities[city.name]);
-                };
-                activityList.appendChild(button);
+            // Group activities by type
+            selectedActivityTypes.forEach(type => {
+                const typeHeader = document.createElement("h4");
+                typeHeader.textContent = type;
+                activityList.appendChild(typeHeader);
+
+                const typeActivities = activities.filter(a => a.type === type);
+                selectedActivities[city.name][type] = [];
+
+                typeActivities.forEach(activity => {
+                    const button = document.createElement("button");
+                    button.textContent = `${activity.title}`;
+                    button.classList.add("activity-button");
+                    button.onclick = () => {
+                        toggleButtonSelection(button, activity, selectedActivities[city.name][type]);
+                        console.log(`Selected Activities for ${type} in ${city.name}:`, selectedActivities[city.name][type]);
+                    };
+                    activityList.appendChild(button);
+                });
             });
         } catch (error) {
             console.error(`Error fetching activities for city ${city.name}:`, error);
@@ -175,16 +185,24 @@ function goToSummary() {
         cityHeader.textContent = city;
         summaryDiv.appendChild(cityHeader);
 
-        selectedActivities[city].forEach(activity => {
-            const activityItem = document.createElement("div");
-            activityItem.innerHTML = `
-                <strong>${activity.title}</strong><br>
-                <small>Type: ${activity.type}</small><br>
-                <small>Best Time: ${activity.bestTime}</small><br>
-                <small>Cost: ${activity.cost}</small>
-            `;
-            summaryDiv.appendChild(activityItem);
-        });
+        const activitiesByType = selectedActivities[city]; // This is an object with activity types as keys.
+
+        for (const [type, activities] of Object.entries(activitiesByType)) {
+            const typeHeader = document.createElement("h4");
+            typeHeader.textContent = type;
+            summaryDiv.appendChild(typeHeader);
+
+            activities.forEach(activity => {
+                const activityItem = document.createElement("div");
+                activityItem.innerHTML = `
+                    <strong>${activity.title}</strong><br>
+                    <small>Best Time: ${activity.bestTime}</small><br>
+                    <small>Cost: ${activity.cost}</small>
+                `;
+                activityItem.classList.add("summary-activity");
+                summaryDiv.appendChild(activityItem);
+            });
+        }
     });
 
     document.getElementById("page4").classList.add("hidden");
