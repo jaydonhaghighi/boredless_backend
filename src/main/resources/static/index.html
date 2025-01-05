@@ -1,23 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Travel Planner</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 <!-- Page 1: Country Selection -->
 <div id="page1" class="input-container">
   <h1>TravelWise</h1>
-  <input type="text" id="countryInput" class="input" placeholder="Enter a Country">
+  <input type="text" id="countryInput" class="input" placeholder="Enter a Country" />
   <button class="button" onclick="goToCitySelection()">Next</button>
 </div>
 
 <!-- Page 2: City Selection -->
 <div id="page2" class="container hidden">
   <h1>Select Cities to Visit</h1>
-  <p><span id="countryName"></span></p>
+  <p>
+    <span id="countryName"></span>
+  </p>
   <div id="cityList" class="checkbox-container"></div>
   <button class="button" onclick="goToActivityTypeSelection()">Next</button>
 </div>
@@ -32,7 +34,11 @@
 <!-- Page 4: Activity Selection -->
 <div id="page4" class="container hidden">
   <h1>Select Activities</h1>
+
+  <!-- This container will hold one 'column' div per city,
+       each containing that city's activities stacked vertically. -->
   <div id="activityList"></div>
+
   <button class="button" onclick="goToSummary()">Next</button>
 </div>
 

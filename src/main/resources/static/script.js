@@ -114,9 +114,11 @@ async function goToActivitySelection() {
 
     console.log("Selected Activity Types:", selectedActivityTypes);
 
+    // Clear the #activityList container (Page 4) before populating
     const activityList = document.getElementById("activityList");
     activityList.innerHTML = "";
 
+    // For each city selected, fetch activities and build a column
     for (const city of selectedCities) {
         console.log("Fetching activities for city:", city.name);
 
@@ -139,42 +141,74 @@ async function goToActivitySelection() {
             const activities = await response.json();
             console.log("Activities Response:", activities);
 
-            if (!Array.isArray(activities) || activities.length === 0) continue;
+            // Skip if no activities returned
+            if (!Array.isArray(activities) || activities.length === 0) {
+                continue;
+            }
 
+            // Create a dedicated "column" div for this city
+            const cityColumn = document.createElement("div");
+            cityColumn.classList.add("city-activities-column");
+
+            // Add a header with the city name
             const cityHeader = document.createElement("h3");
             cityHeader.textContent = city.name;
-            activityList.appendChild(cityHeader);
+            cityColumn.appendChild(cityHeader);
 
+            // Initialize the object to store selected activities for this city
             selectedActivities[city.name] = {};
 
-            // Group activities by type
+            // For each selected activity type, create a vertical list of buttons
             selectedActivityTypes.forEach(type => {
-                const typeHeader = document.createElement("h4");
-                typeHeader.textContent = type;
-                activityList.appendChild(typeHeader);
-
+                // Filter activities for this type
                 const typeActivities = activities.filter(a => a.type === type);
+
+                // Prepare an array to store selected items
                 selectedActivities[city.name][type] = [];
 
+                // Create a container for the activity type (header + button stack)
+                const typeContainer = document.createElement("div");
+                typeContainer.classList.add("activity-type-container");
+
+                // Activity type header
+                const typeHeader = document.createElement("h4");
+                typeHeader.textContent = type;
+                typeContainer.appendChild(typeHeader);
+
+                // Vertical stack for activity buttons
+                const activityButtons = document.createElement("div");
+                activityButtons.classList.add("activity-buttons");
+
+                // Create a button for each activity
                 typeActivities.forEach(activity => {
                     const button = document.createElement("button");
-                    button.textContent = `${activity.title}`;
+                    button.textContent = activity.title;
                     button.classList.add("activity-button");
                     button.onclick = () => {
                         toggleButtonSelection(button, activity, selectedActivities[city.name][type]);
                         console.log(`Selected Activities for ${type} in ${city.name}:`, selectedActivities[city.name][type]);
                     };
-                    activityList.appendChild(button);
+                    activityButtons.appendChild(button);
                 });
+
+                // Combine the buttons into the type container, and the container into the city column
+                typeContainer.appendChild(activityButtons);
+                cityColumn.appendChild(typeContainer);
             });
+
+            // Finally, add the city column to the #activityList container
+            activityList.appendChild(cityColumn);
+
         } catch (error) {
             console.error(`Error fetching activities for city ${city.name}:`, error);
         }
     }
 
+    // Show Page 4, hide Page 3
     document.getElementById("page3").classList.add("hidden");
     document.getElementById("page4").classList.remove("hidden");
 }
+
 
 function goToSummary() {
     const summaryDiv = document.getElementById("summary");

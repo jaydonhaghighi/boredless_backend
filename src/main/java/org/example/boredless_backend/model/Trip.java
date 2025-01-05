@@ -9,7 +9,7 @@ import jakarta.persistence.OneToMany;
 import java.util.List;
 
 @Entity
-public class Journey {
+public class Trip {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,9 +18,9 @@ public class Journey {
     @OneToMany(mappedBy = "journey")
     private List<Destination> destinations;
 
-    public Journey() {} // default constructor
+    public Trip() {} // default constructor
 
-    public Journey(List<Destination> destinations) {
+    public Trip(List<Destination> destinations) {
         this.destinations = destinations;
     }
 

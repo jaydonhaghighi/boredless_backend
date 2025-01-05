@@ -30,19 +30,19 @@ public class ChatService {
     public List<City> getTopCities(String country) {
         // Define the structured format for cities
         String format = """
-                        Your response should be a JSON array of objects, with each object adhering to this structure:
-                        {
-                            "name": "City name",
-                            "country": "Country name",
-                            "description": "Brief description of the city"
-                        }
-                        """;
+        Your response should be a JSON array of objects, with each object adhering to this structure:
+        {
+            "name": "City name",
+            "country": "Country name",
+            "description": "Brief description of the city"
+        }
+        """;
 
         // Create a dynamic prompt
         String template = """
-                          List the top 5 cities to visit in {country}.
-                          {format}
-                          """;
+        List the top 5 cities to visit in {country}.
+        {format}
+        """;
 
         PromptTemplate promptTemplate = new PromptTemplate(template, Map.of("country", country, "format", format));
         Prompt prompt = new Prompt(promptTemplate.createMessage());
@@ -52,22 +52,22 @@ public class ChatService {
         String rawResponse = generation.getOutput().getContent();
         System.out.println("Raw AI response: " + rawResponse);
 
-        // Preprocess the response to extract the JSON part
-        String jsonResponse = rawResponse;
-        if (rawResponse.contains("```json")) {
-            jsonResponse = rawResponse.substring(rawResponse.indexOf("```json") + 7, rawResponse.lastIndexOf("```")).trim();
-        }
+        // 1) Extract the valid JSON portion
+        String jsonResponse = extractJsonFromCodeBlock(rawResponse);
 
-        // Convert the AI's response into a list of City objects
-        ObjectMapper objectMapper = new ObjectMapper();
+        // 2) Parse the JSON into a list of City objects
         try {
             return objectMapper.readValue(jsonResponse, new TypeReference<List<City>>() {});
         } catch (Exception e) {
-            System.err.println("Error parsing AI response: " + rawResponse); // Log original response for debugging
+            System.err.println("Error parsing AI response: " + rawResponse); // Log original response
             throw new RuntimeException("Failed to get top cities for country: " + country, e);
         }
     }
 
+
+    /**
+     * Updated method to request up to 5 top activities per ActivityType.
+     */
     public List<Activity> getActivities(City city, List<ActivityType> activityTypes) {
         // Build a comma-separated list of activity types
         String activityTypeList = activityTypes.stream()
@@ -77,21 +77,27 @@ public class ChatService {
 
         // Define the structured format for activities
         String format = """
-        Your response should be a JSON array of objects, with each object adhering to this structure:
-        {
-            "title": "Activity name",
-            "type": "Activity type",
-            "bestTime": "Best time to do the activity",
-            "cost": "Cost or 'Free'"
-        }
-        Each activity type should include 5 unique activities.
-        """;
+            Your response should be a single JSON array of objects.
+            Each object must follow this structure:
+            {
+                "title": "Activity name",
+                "type": "Activity type",   // Must match one of the requested activity types
+                "bestTime": "Best time to do the activity",
+                "cost": "Cost or 'Free'"
+            }
+            """;
 
-        // Create a dynamic prompt
+        // Instruct the AI to produce up to 5 top activities *for each* activity type
         String template = """
-        For the city of {cityName}, generate 5 unique activities for each of the following types: {activityTypes}.
-        {format}
-        """;
+            For each of the following activity types in {cityName},
+            list top 5 recommended activities (fewer if not available).
+            Combine all activities for all types into a single JSON array.
+            
+            Activity Types: {activityTypes}
+            {format}
+            
+            The 'type' field in each object must match the relevant activity type.
+            """;
 
         PromptTemplate promptTemplate = new PromptTemplate(
                 template,
@@ -100,23 +106,41 @@ public class ChatService {
 
         Prompt prompt = new Prompt(promptTemplate.createMessage());
 
-        // Call the AI model and process the response
         Generation generation = chatModel.call(prompt).getResult();
         String rawResponse = generation.getOutput().getContent();
         System.out.println("Raw AI response: " + rawResponse);
 
-        // Trim backticks if present
-        if (rawResponse.startsWith("```json")) {
-            rawResponse = rawResponse.substring(7, rawResponse.length() - 3).trim();
-        }
+        // 1) Extract the valid JSON portion
+        String jsonResponse = extractJsonFromCodeBlock(rawResponse);
 
-        // Convert the AI's response into a list of Activity objects
+        // 2) Convert to a list of Activity objects
         try {
-            return objectMapper.readValue(rawResponse, new TypeReference<List<Activity>>() {});
+            return objectMapper.readValue(jsonResponse, new TypeReference<List<Activity>>() {});
         } catch (Exception e) {
-            System.err.println("Error parsing AI response: " + rawResponse); // Debugging
+            System.err.println("Error parsing AI response: " + rawResponse);
             throw new RuntimeException("Failed to parse AI response into a list of Activity objects.", e);
         }
     }
-}
 
+    /**
+     * Extracts valid JSON from an AI response that may contain triple-backtick code blocks (```json ... ```).
+     * If no code block is found, returns the entire response trimmed.
+     */
+    private String extractJsonFromCodeBlock(String rawResponse) {
+        String content = rawResponse.trim();
+
+        // If the response includes ```json ... ```
+        if (content.contains("```json")) {
+            int startIndex = content.indexOf("```json") + "```json".length();
+            int endIndex = content.lastIndexOf("```");
+
+            if (startIndex < endIndex) {
+                // Extract everything between '```json' and the final '```'
+                content = content.substring(startIndex, endIndex).trim();
+            }
+        }
+        // If it doesn't contain "```json", or indexes were invalid, fallback to returning the entire string (trimmed).
+        return content;
+    }
+
+}

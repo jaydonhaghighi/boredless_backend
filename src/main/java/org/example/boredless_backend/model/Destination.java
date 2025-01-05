@@ -6,8 +6,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 
-import java.util.concurrent.CountDownLatch;
-
 @Entity
 public class Destination {
 
@@ -16,7 +14,7 @@ public class Destination {
     private Long id;
 
     @ManyToOne
-    private Journey journey;
+    private Trip journey;
 
     private String country;
 
